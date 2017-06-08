@@ -42,9 +42,26 @@ public class RequestController {
 
   @RequestMapping(value="/move", method=RequestMethod.POST, produces = "application/json")
   public MoveResponse move(@RequestBody MoveRequest request) {
+    char[][] map = makeMap(request);
+    Snake s = getMySnake(request);
+
+    Move m = null;
+    switch (request.getTurn() % 4) {
+    case 0:
+      m = Move.DOWN;
+      break;
+    case 1:
+      m = Move.RIGHT;
+      break;
+    case 2:
+      m = Move.UP;
+      break;
+    case 3:
+      m = Move.LEFT;
+      break;
+    }
     return new MoveResponse()
-      .setMove(Move.DOWN)
-      .setTaunt("Going Down!");
+            .setMove(m);
   }
     
   @RequestMapping(value="/end", method=RequestMethod.POST)
@@ -52,6 +69,34 @@ public class RequestController {
       // No response required
       Map<String, Object> responseObject = new HashMap<String, Object>();
       return responseObject;
+  }
+
+  private Snake getMySnake(MoveRequest request) {
+    String me = request.getYou();
+    for (Snake s : request.getSnakes()) {
+      if (s.getId() == me) {
+        return s;
+      }
+    }
+    return null;
+  }
+
+  char[][] makeMap(MoveRequest request) {
+    char[][] map = new char[request.getWidth()][request.getHeight()];
+    for (int[] f : request.getFood()) {
+      map[f[0]][f[1]] = 'f'; // food
+    }
+    for (Snake s : request.getSnakes()) {
+      for (int[] b : s.getCoords()) {
+        if (s.getId() == request.getYou()) {
+          map[b[0]][b[1]] = 's'; // self head
+        } else {
+          map[b[0]][b[1]] = 'o'; // opponent head
+        }
+        map[b[0]][b[1]] = 'x'; // obstacle
+      }
+    }
+    return map;
   }
 
 }
