@@ -52,40 +52,23 @@ public class RequestController {
 
     @RequestMapping(value="/move", method=RequestMethod.POST, produces = "application/json")
     public MoveResponse move(@RequestBody MoveRequest request) {
-        int[][] food = request.getFood();
-
-        Snake me = request.getSnakes().stream().filter(s -> s.getId().equals(request.getYou())).findAny().orElse(null);
-        int[][] myPos = me.getCoords();
-
-        System.out.println("My post head:" + myPos[0][0]);
-        for (int x = 0; x < myPos.length; x++) {
-            for (int y = 0; y < myPos[x].length; y++) {
-                System.out.println("My body:" + myPos[x][y]);
-            }
+        Move m = null;
+        switch (request.getTurn() % 4) {
+            case 0:
+                m = Move.DOWN;
+                break;
+            case 1:
+                m = Move.RIGHT;
+                break;
+            case 2:
+                m = Move.UP;
+                break;
+            case 3:
+                m = Move.LEFT;
+                break;
         }
-
-        List<Snake> activeSnakes = request.getSnakes().stream()
-                .filter(s -> !request.getDeadSnakes().contains(s) &&
-                        s.getName().equals(request.getYou())
-                ).collect(Collectors.toList());
-
-        if (myPos[0][1] < request.getHeight()) {
-            return new MoveResponse()
-                    .setMove(Move.DOWN)
-                    .setTaunt("Going Down!");
-        } else if (myPos[0][0] > 0) {
-            return new MoveResponse()
-                    .setMove(Move.LEFT)
-                    .setTaunt("Going left!");
-        } else if (myPos[0][1] > 0) {
-            return new MoveResponse()
-                    .setMove(Move.UP)
-                    .setTaunt("Going up!");
-        } else {
-            return new MoveResponse()
-                    .setMove(Move.RIGHT)
-                    .setTaunt("Going right!");
-        }
+        return new MoveResponse()
+                .setMove(m);
     }
 
     @RequestMapping(value="/end", method=RequestMethod.POST)
