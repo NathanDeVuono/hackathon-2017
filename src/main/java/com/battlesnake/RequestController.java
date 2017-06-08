@@ -16,87 +16,97 @@
 
 package com.battlesnake;
 
-import com.battlesnake.data.*;
-
-import org.springframework.web.bind.annotation.RestController;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import com.battlesnake.data.HeadType;
+import com.battlesnake.data.Move;
+import com.battlesnake.data.MoveRequest;
+import com.battlesnake.data.MoveResponse;
+import com.battlesnake.data.Snake;
+import com.battlesnake.data.StartRequest;
+import com.battlesnake.data.StartResponse;
+import com.battlesnake.data.TailType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.*;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RequestController {
 
-  @RequestMapping(value="/start", method=RequestMethod.POST, produces="application/json")
-  public StartResponse start(@RequestBody StartRequest request) {
-    return new StartResponse()
-      .setName("Climbing Snake Man")
-      .setColor("#FF0000")
-      .setHeadUrl("http://vignette1.wikia.nocookie.net/nintendo/images/6/61/Bowser_Icon.png/revision/latest?cb=20120820000805&path-prefix=en")
-      .setHeadType(HeadType.DEAD)
-      .setTailType(TailType.PIXEL)
-      .setTaunt("Roarrrrrrrrr!");
-  }
+    private int height;
+    private int width;
 
-  @RequestMapping(value="/move", method=RequestMethod.POST, produces = "application/json")
-  public MoveResponse move(@RequestBody MoveRequest request) {
-    char[][] map = makeMap(request);
-    Snake s = getMySnake(request);
-
-    Move m = null;
-    switch (request.getTurn() % 4) {
-    case 0:
-      m = Move.DOWN;
-      break;
-    case 1:
-      m = Move.RIGHT;
-      break;
-    case 2:
-      m = Move.UP;
-      break;
-    case 3:
-      m = Move.LEFT;
-      break;
+    @RequestMapping(value="/start", method=RequestMethod.POST, produces="application/json")
+    public StartResponse start(@RequestBody StartRequest request) {
+        return new StartResponse()
+                .setName("Climbing Snake Man")
+                .setColor("#FF0000")
+                .setHeadUrl("http://vignette1.wikia.nocookie.net/nintendo/images/6/61/Bowser_Icon.png/revision/latest?cb=20120820000805&path-prefix=en")
+                .setHeadType(HeadType.DEAD)
+                .setTailType(TailType.PIXEL)
+                .setTaunt("Roarrrrrrrrr!");
     }
-    return new MoveResponse()
-            .setMove(m);
-  }
-    
-  @RequestMapping(value="/end", method=RequestMethod.POST)
-  public Object end() {
-      // No response required
-      Map<String, Object> responseObject = new HashMap<String, Object>();
-      return responseObject;
-  }
 
-  private Snake getMySnake(MoveRequest request) {
-    String me = request.getYou();
-    for (Snake s : request.getSnakes()) {
-      if (s.getId() == me) {
-        return s;
-      }
+    @RequestMapping(value="/move", method=RequestMethod.POST, produces = "application/json")
+    public MoveResponse move(@RequestBody MoveRequest request) {
+//      Snake me = request.getSnakes().stream().filter(s -> s.getId().equals(request.getYou())).findAny().orElse(null);
+//        Move m = null;
+//        switch (request.getTurn() % 4) {
+//            case 0:
+//                m = Move.DOWN;
+//                break;
+//            case 1:
+//                m = Move.RIGHT;
+//                break;
+//            case 2:
+//                m = Move.UP;
+//                break;
+//            case 3:
+//                m = Move.LEFT;
+//                break;
+//        }
+      Move m = directionToFood(request);
+        return new MoveResponse()
+                .setMove(m);
     }
-    return null;
-  }
 
-  char[][] makeMap(MoveRequest request) {
-    char[][] map = new char[request.getWidth()][request.getHeight()];
-    for (int[] f : request.getFood()) {
-      map[f[0]][f[1]] = 'f'; // food
+    @RequestMapping(value="/end", method=RequestMethod.POST)
+    public Object end() {
+        // No response required
+        Map<String, Object> responseObject = new HashMap<String, Object>();
+        return responseObject;
     }
-    for (Snake s : request.getSnakes()) {
-      for (int[] b : s.getCoords()) {
-        if (s.getId() == request.getYou()) {
-          map[b[0]][b[1]] = 's'; // self head
+
+    private Move directionToFood(MoveRequest request) {
+      Snake me = request.getSnakes().stream().filter(s -> s.getId().equals(request.getYou())).findAny().orElse(null);
+      int[][] myPos = me.getCoords();
+      int[][] food = request.getFood();
+      int x = myPos[0][0];
+      int y = myPos[0][1];
+      int fx = food [0][0];
+      int fy = food [0][1];
+      System.out.println("x y" + x + ", " + y);
+
+      int xDiff = x - fx;
+      int yDiff = y - fy;
+      System.out.println("xDiff:" + xDiff);
+      System.out.println("yDiff:" + yDiff);
+
+      if (xDiff > yDiff) {
+        if (yDiff > 0) {
+          return Move.UP;
         } else {
-          map[b[0]][b[1]] = 'o'; // opponent head
+          return Move.DOWN;
         }
-        map[b[0]][b[1]] = 'x'; // obstacle
+      } else {
+        if (xDiff > 0) {
+          return Move.LEFT;
+        } else {
+          return Move.RIGHT;
+        }
       }
     }
-    return map;
-  }
-
 }
