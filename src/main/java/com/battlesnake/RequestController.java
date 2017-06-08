@@ -54,7 +54,7 @@ public class RequestController {
     public MoveResponse move(@RequestBody MoveRequest request) {
         int[][] food = request.getFood();
 
-        Snake me = request.getSnakes().stream().filter(s -> s.getName().equals(request.getYou())).findAny().orElse(null);
+        Snake me = request.getSnakes().stream().filter(s -> s.getId().equals(request.getYou())).findAny().orElse(null);
         int[][] myPos = me.getCoords();
 
         System.out.println("My post head:" + myPos[0][0]);
@@ -69,18 +69,22 @@ public class RequestController {
                         s.getName().equals(request.getYou())
                 ).collect(Collectors.toList());
 
-        if (myPos[0][0] <= request.getHeight()) {
+        if (myPos[0][1] < request.getHeight()) {
             return new MoveResponse()
                     .setMove(Move.DOWN)
                     .setTaunt("Going Down!");
-        } else if (myPos[0][0] <= request.getWidth()) {
+        } else if (myPos[0][0] > 0) {
             return new MoveResponse()
                     .setMove(Move.LEFT)
                     .setTaunt("Going left!");
-        } else {
+        } else if (myPos[0][1] > 0) {
             return new MoveResponse()
                     .setMove(Move.UP)
                     .setTaunt("Going up!");
+        } else {
+            return new MoveResponse()
+                    .setMove(Move.RIGHT)
+                    .setTaunt("Going right!");
         }
     }
 
