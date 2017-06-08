@@ -16,42 +16,78 @@
 
 package com.battlesnake;
 
-import com.battlesnake.data.*;
-
-import org.springframework.web.bind.annotation.RestController;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import com.battlesnake.data.HeadType;
+import com.battlesnake.data.Move;
+import com.battlesnake.data.MoveRequest;
+import com.battlesnake.data.MoveResponse;
+import com.battlesnake.data.Snake;
+import com.battlesnake.data.StartRequest;
+import com.battlesnake.data.StartResponse;
+import com.battlesnake.data.TailType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.*;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RequestController {
 
-  @RequestMapping(value="/start", method=RequestMethod.POST, produces="application/json")
-  public StartResponse start(@RequestBody StartRequest request) {
-    return new StartResponse()
-      .setName("Climbing Snake Man")
-      .setColor("#FF0000")
-      .setHeadUrl("http://vignette1.wikia.nocookie.net/nintendo/images/6/61/Bowser_Icon.png/revision/latest?cb=20120820000805&path-prefix=en")
-      .setHeadType(HeadType.DEAD)
-      .setTailType(TailType.PIXEL)
-      .setTaunt("Roarrrrrrrrr!");
-  }
+    private int height;
+    private int width;
 
-  @RequestMapping(value="/move", method=RequestMethod.POST, produces = "application/json")
-  public MoveResponse move(@RequestBody MoveRequest request) {
-    return new MoveResponse()
-      .setMove(Move.DOWN)
-      .setTaunt("Going Down!");
-  }
-    
-  @RequestMapping(value="/end", method=RequestMethod.POST)
-  public Object end() {
-      // No response required
-      Map<String, Object> responseObject = new HashMap<String, Object>();
-      return responseObject;
-  }
+    @RequestMapping(value="/start", method=RequestMethod.POST, produces="application/json")
+    public StartResponse start(@RequestBody StartRequest request) {
+        return new StartResponse()
+                .setName("Bowser Snake")
+                .setColor("#FF0000")
+                .setHeadUrl("http://vignette1.wikia.nocookie.net/nintendo/images/6/61/Bowser_Icon.png/revision/latest?cb=20120820000805&path-prefix=en")
+                .setHeadType(HeadType.DEAD)
+                .setTailType(TailType.PIXEL)
+                .setTaunt("Roarrrrrrrrr!");
+    }
 
+    @RequestMapping(value="/move", method=RequestMethod.POST, produces = "application/json")
+    public MoveResponse move(@RequestBody MoveRequest request) {
+        int[][] food = request.getFood();
+
+        Snake me = request.getSnakes().stream().filter(s -> s.getName().equals(request.getYou())).findAny().orElse(null);
+        int[][] myPos = me.getCoords();
+
+        System.out.println("My post head:" + myPos[0][0]);
+        for (int x = 0; x < myPos.length; x++) {
+            for (int y = 0; y < myPos[x].length; y++) {
+                System.out.println("My body:" + myPos[x][y]);
+            }
+        }
+
+        List<Snake> activeSnakes = request.getSnakes().stream()
+                .filter(s -> !request.getDeadSnakes().contains(s) &&
+                        s.getName().equals(request.getYou())
+                ).collect(Collectors.toList());
+
+        if (myPos[0][0] <= request.getHeight()) {
+            return new MoveResponse()
+                    .setMove(Move.DOWN)
+                    .setTaunt("Going Down!");
+        } else if (myPos[0][0] <= request.getWidth()) {
+            return new MoveResponse()
+                    .setMove(Move.LEFT)
+                    .setTaunt("Going left!");
+        } else {
+            return new MoveResponse()
+                    .setMove(Move.UP)
+                    .setTaunt("Going up!");
+        }
+    }
+
+    @RequestMapping(value="/end", method=RequestMethod.POST)
+    public Object end() {
+        // No response required
+        Map<String, Object> responseObject = new HashMap<String, Object>();
+        return responseObject;
+    }
 }
