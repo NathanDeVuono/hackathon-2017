@@ -1,0 +1,30 @@
+{
+  "name": "xm-battlesnake-node",
+  "description": "A simple BattleSnake AI written in NodeJS",
+  "version": "0.0.0",
+  "private": true,
+  "author": "xMatters",
+  "repository": "https://github.com/xmatters-tko/battlesnake-node",
+  "licenses": [
+    {
+      "type": "WTFPL",
+      "url": "http://www.wtfpl.net/txt/copying/"
+    }
+  ],
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "morgan": "^1.8.1",
+    "nodemon": "^1.11.0"
+  },
+  "devDependencies": {
+    "foreman": "^2.0.0"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": "6.x"
+  },
+  "scripts": {
+    "start": "nf start"
+  }
+}
