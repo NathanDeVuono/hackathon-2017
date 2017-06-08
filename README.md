@@ -1,13 +1,12 @@
-#below are battlesnake docs
-Climbing Snakemen!
+# climbingsnakes go!
+we java now
 
 
+# xm-battlesnake-java
 
-# battlesnake-nodejs
+A simple [BattleSnake AI](http://battlesnake.io) written in Java using Spring Boot, which can easily be deployed to Heroku. Spring Boot provides a simple and easy way to implement rest services required by your snake. This tutorial will help you get started (https://spring.io/guides/gs/actuator-service/).
 
-A simple [BattleSnake AI](http://battlesnake.io) written for NodeJS.
-
-To get started you'll need a working NodeJS development environment, and at least read the Heroku docs on [deploying a NodeJS app](https://devcenter.heroku.com/articles/getting-started-with-nodejs). This client uses [Express4](http://expressjs.com/en/4x/api.html) for easy route management, read up on the docs to learn more about reading incoming JSON params, writing responses, etc.
+This application supports the [Getting Started with Java on Heroku](https://devcenter.heroku.com/articles/getting-started-with-java) article - check it out.
 
 ## Pre-requisite Accounts
 Every team must show up with a laptop and create the following accounts in order to use the provided start snake. You are welcome to use existing accounts if you have them already.
@@ -19,20 +18,18 @@ You'll need the follwing software on your computer before you can get started wi
 - [GitHub CLI 2.x](https://git-scm.com/downloads)
 - [Heroku CLI 5.x](https://cli.heroku.com/).
 
-You'll need the following software on your computer if you want to compile and run the application locally. This is completely optional but probably desired since troubleshooting coding errors and testing behaviour will be much easier. 
-- [NodeJs 6.x or 7.x](https://nodejs.org/)
-- [NPM 3.x](https://www.npmjs.com/get-npm) - This is installed with NodeJS
-
-If you haven't setup a NodeJS development environment before, read [how to get started with NodeJS](http://nodejs.org/documentation/tutorials/). You'll also need [npm](https://www.npmjs.com/) for easy JS dependency management.
+You'll need the follwing software on your computer if you want to compile and run the application locally. This is completely optional but probably desired since troubleshooting coding errors and testing behaviour will be much easier. 
+- [Java 1.8.x](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+- [Maven 3.x](https://maven.apache.org/install.html)
 
 If you have the software installed already, confirm by running the respective commands on the command prompt and check the versions:
-- ```npm -v```
-- ```node -v```
+- ```javac -version```
+- ```mvn --version```
 - ```git --version```
 - ```heroku --version```
 
 ## Preparing your project
-DON'T SKIP THIS STEP. You'll need your own copy of this project under your own GitHub account in order to make and publish changes to your snake.
+**DON'T SKIP THIS STEP**. You'll need your own copy of this project under your own GitHub account in order to make and publish changes to your snake.
 - Make sure you are signed in to your GitHub account
 - Fork this [project](https://github.com/xmatters-tko/xm-battlesnake-java/fork)
 
@@ -40,8 +37,9 @@ DON'T SKIP THIS STEP. You'll need your own copy of this project under your own G
 At this point, make sure that all of you software is installed, and you've forked this project correctly. Run the following commands:
 
 ```sh
-$ git clone https://github.com/<your account>/xm-battlesnake-nodejs.git
-$ cd xm-battlesnake-nodejs
+$ git clone https://github.com/<your account>/xm-battlesnake-java.git
+$ cd xm-battlesnake-java
+$ mvn install
 $ heroku local
 ```
 
@@ -91,6 +89,7 @@ $ curl https://my-snake.herokuapp.com/start -X POST -H "Content-Type: applicatio
 ```
 $ curl https://my-snake.herokuapp.com/move -X POST -H "Content-Type: application/json" -d '{ "you": "2c4d4d70-8cca-48e0-ac9d-03ecafca0c98","width": 2,"turn": 0,"snakes": [{ "taunt": "git gud","name": "my-snake","id": "2c4d4d70-8cca-48e0-ac9d-03ecafca0c98","health_points": 93,"coords": [[0,0],[0,0],[0,0]] },{ "taunt": "gotta go fast","name": "other-snake","id": "c35dcf26-7f48-492c-b7b5-94ae78fbc713","health_points": 50,"coords": [[1,0],[1,0],[1,0]] }],"height": 2,"game_id": "a2facef2-b031-44ba-a36c-0859c389ef96","food": [[1,1]],"dead_snakes": [{ "taunt": "gotta go fast","name": "other-snake","id": "83fdf2b9-c8d0-44f4-acb2-0c506139079e","health_points": 50,"coords": [[5,0],[5,0],[5,0]] }] }'
 ```
+
 ### Pushing Updates to Heroku
 You have to commit your changes to your git project as part of pushing them to the remote heroku git.
 ```sh
@@ -106,6 +105,7 @@ $ heroku logs --tail
 
 ## Documentation
 
-For more information about using NodeJS on Heroku, see these Dev Center articles:
+For more information about using Java on Heroku, see these Dev Center articles:
 
-- [NodeJS on Heroku](https://devcenter.heroku.com/categories/nodejs)
+- [Java on Heroku](https://devcenter.heroku.com/categories/java)
+```

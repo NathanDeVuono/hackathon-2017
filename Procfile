@@ -1,1 +1,1 @@
-web: node index.js
+web: java -jar target/xm-battlesnake-java-1.0.jar
